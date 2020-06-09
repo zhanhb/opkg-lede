@@ -465,17 +465,15 @@ static int
 opkg_install_check_downgrade(pkg_t * pkg, pkg_t * old_pkg, int message)
 {
 	if (old_pkg) {
-		char message_out[15];
+		const char *message_out = "Upgrading ";
 		char *old_version = pkg_version_str_alloc(old_pkg);
 		char *new_version = pkg_version_str_alloc(pkg);
 		int cmp = pkg_compare_versions(old_pkg, pkg);
 		int rc = 0;
 
-		memset(message_out, '\x0', 15);
-		strncpy(message_out, "Upgrading ", strlen("Upgrading "));
 		if ((conf->force_downgrade == 1) && (cmp > 0)) {	/* We've been asked to allow downgrade  and version is precedent */
 			cmp = -1;	/* then we force opkg to downgrade */
-			strncpy(message_out, "Downgrading ", strlen("Downgrading "));	/* We need to use a value < 0 because in the 0 case we are asking to */
+			message_out = "Downgrading ";	/* We need to use a value < 0 because in the 0 case we are asking to */
 			/* reinstall, and some check could fail asking the "force-reinstall" option */
 		}
 
@@ -508,14 +506,11 @@ opkg_install_check_downgrade(pkg_t * pkg, pkg_t * old_pkg, int message)
 		free(new_version);
 		return rc;
 	} else {
-		char message_out[15];
-		memset(message_out, '\x0', 15);
+		const char *message_out;
 		if (message)
-			strncpy(message_out, "Upgrading ",
-				strlen("Upgrading "));
+			message_out = "Upgrading ";
 		else
-			strncpy(message_out, "Installing ",
-				strlen("Installing "));
+			message_out = "Installing ";
 		char *version = pkg_version_str_alloc(pkg);
 
 		if (!conf->download_only)
