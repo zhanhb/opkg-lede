@@ -1415,6 +1415,7 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
 	pkg->state_flag |= SF_FILELIST_CHANGED;
 
 	if (old_pkg) {
+		pkg->auto_installed = old_pkg->auto_installed;
 		pkg_remove_orphan_dependent(pkg, old_pkg);
 		old_pkg->is_upgrade = 1;
 		pkg->is_upgrade = 1;
