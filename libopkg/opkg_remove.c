@@ -194,7 +194,7 @@ static int remove_autoinstalled(pkg_t * pkg)
 			 * already been removed.
 			 */
 			if (!p)
-				return -1;
+				continue;
 
 			if (!p->auto_installed)
 				continue;
