@@ -37,6 +37,10 @@ static const struct alternative_provider providers[] = {
 		.name = "busybox",
 		.altpath = "/bin/busybox",
 	},
+	{
+		.name = "busybox-selinux",
+		.altpath = "/bin/busybox",
+	},
 };
 
 static const char *pkg_alternatives_check_providers(const char *path)
