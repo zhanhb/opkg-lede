@@ -127,7 +127,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 					unlink(full_name);	/* Directories might not be empty etc */
 				}
 			} else {
-				if ((function & extract_quiet) != extract_quiet) {
+				if (!(function & extract_quiet)) {
 					*err = -1;
 					error_msg
 					    ("%s not created: newer or same age file exists",
@@ -142,7 +142,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 			buf = xstrdup(full_name);
 			parent = dirname(buf);
 			if (make_directory(parent, -1, FILEUTILS_RECUR) != 0) {
-				if ((function & extract_quiet) != extract_quiet) {
+				if (!(function & extract_quiet)) {
 					*err = -1;
 					error_msg
 					    ("couldn't create leading directories");
@@ -154,8 +154,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 		case S_IFREG:
 			if (file_entry->link_name) {	/* Found a cpio hard link */
 				if (link(full_link_name, full_name) != 0) {
-					if ((function & extract_quiet) !=
-					    extract_quiet) {
+					if (!(function & extract_quiet)) {
 						*err = -1;
 						perror_msg
 						    ("Cannot link from %s to '%s'",
@@ -181,8 +180,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 		case S_IFDIR:
 			if (stat_res != 0) {
 				if (mkdir(full_name, file_entry->mode) < 0) {
-					if ((function & extract_quiet) !=
-					    extract_quiet) {
+					if (!(function & extract_quiet)) {
 						*err = -1;
 						perror_msg("Cannot make dir %s",
 							   full_name);
@@ -192,7 +190,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 			break;
 		case S_IFLNK:
 			if (symlink(file_entry->link_name, full_name) < 0) {
-				if ((function & extract_quiet) != extract_quiet) {
+				if (!(function & extract_quiet)) {
 					*err = -1;
 					perror_msg
 					    ("Cannot create symlink from %s to '%s'",
@@ -209,7 +207,7 @@ static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 			if (mknod
 			    (full_name, file_entry->mode,
 			     file_entry->device) == -1) {
-				if ((function & extract_quiet) != extract_quiet) {
+				if (!(function & extract_quiet)) {
 					*err = -1;
 					perror_msg("Cannot create node %s",
 						   file_entry->name);
