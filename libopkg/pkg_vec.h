@@ -28,11 +28,13 @@ typedef struct abstract_pkg_vec abstract_pkg_vec_t;
 struct pkg_vec {
 	pkg_t **pkgs;
 	unsigned int len;
+	unsigned int capacity;
 };
 
 struct abstract_pkg_vec {
 	abstract_pkg_t **pkgs;
 	unsigned int len;
+	unsigned int capacity;
 };
 
 pkg_vec_t *pkg_vec_alloc(void);

@@ -27,6 +27,7 @@ pkg_vec_t *pkg_vec_alloc(void)
 	pkg_vec_t *vec = xcalloc(1, sizeof(pkg_vec_t));
 	vec->pkgs = NULL;
 	vec->len = 0;
+	vec->capacity = 0;
 
 	return vec;
 }
@@ -104,9 +105,14 @@ void pkg_vec_insert_merge(pkg_vec_t * vec, pkg_t * pkg, int set_status)
 
 void pkg_vec_insert(pkg_vec_t * vec, const pkg_t * pkg)
 {
-	vec->pkgs = xrealloc(vec->pkgs, (vec->len + 1) * sizeof(pkg_t *));
-	vec->pkgs[vec->len] = (pkg_t *) pkg;
-	vec->len++;
+	unsigned old_capacity = vec->capacity, new_capacity;
+	if (vec->len == old_capacity) {
+		new_capacity = old_capacity * 2;
+		if (new_capacity < 4) new_capacity = 4;
+		vec->pkgs = xrealloc(vec->pkgs, new_capacity * sizeof(pkg_t *));
+		vec->capacity = new_capacity;
+	}
+	vec->pkgs[vec->len++] = (pkg_t *) pkg;
 }
 
 int pkg_vec_contains(pkg_vec_t * vec, pkg_t * apkg)
@@ -168,6 +174,7 @@ abstract_pkg_vec_t *abstract_pkg_vec_alloc(void)
 	vec = xcalloc(1, sizeof(abstract_pkg_vec_t));
 	vec->pkgs = NULL;
 	vec->len = 0;
+	vec->capacity = 0;
 
 	return vec;
 }
@@ -185,10 +192,15 @@ void abstract_pkg_vec_free(abstract_pkg_vec_t * vec)
  */
 void abstract_pkg_vec_insert(abstract_pkg_vec_t * vec, abstract_pkg_t * pkg)
 {
-	vec->pkgs =
-	    xrealloc(vec->pkgs, (vec->len + 1) * sizeof(abstract_pkg_t *));
-	vec->pkgs[vec->len] = pkg;
-	vec->len++;
+	unsigned old_capacity = vec->capacity, new_capacity;
+	if (vec->len == old_capacity) {
+		new_capacity = old_capacity * 2;
+		if (new_capacity < 4) new_capacity = 4;
+		vec->pkgs =
+				xrealloc(vec->pkgs, new_capacity * sizeof(abstract_pkg_t *));
+		vec->capacity = new_capacity;
+	}
+	vec->pkgs[vec->len++] = pkg;
 }
 
 abstract_pkg_t *abstract_pkg_vec_get(abstract_pkg_vec_t * vec, int i)
