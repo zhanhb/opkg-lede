@@ -108,9 +108,7 @@ struct abstract_pkg {
 	char *name;
 	pkg_vec_t *pkgs;
 
-	/* XXX: This should be abstract_pkg_vec_t for consistency. */
-	struct abstract_pkg **depended_upon_by;
-
+	abstract_pkg_vec_t *depended_upon_by;
 	abstract_pkg_vec_t *provided_by;
 	abstract_pkg_vec_t *replaced_by;
 

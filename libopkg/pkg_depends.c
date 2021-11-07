@@ -978,10 +978,8 @@ char *pkg_depend_str(pkg_t * pkg, int idx)
 void buildDependedUponBy(pkg_t * pkg, abstract_pkg_t * ab_pkg)
 {
 	compound_depend_t *depends;
-	int othercount;
 	int j;
 	abstract_pkg_t *ab_depend;
-	abstract_pkg_t **temp;
 
 	for (depends = pkg_get_ptr(pkg, PKG_DEPENDS); depends && depends->type; depends++) {
 		if (depends->type != PREDEPEND
@@ -990,26 +988,9 @@ void buildDependedUponBy(pkg_t * pkg, abstract_pkg_t * ab_pkg)
 		for (j = 0; j < depends->possibility_count; j++) {
 			ab_depend = depends->possibilities[j]->pkg;
 			if (!ab_depend->depended_upon_by) {
-				ab_depend->depended_upon_by =
-				    xcalloc(1, sizeof(abstract_pkg_t *));
+				ab_depend->depended_upon_by = abstract_pkg_vec_alloc();
 			}
-
-			temp = ab_depend->depended_upon_by;
-			othercount = 1;
-			while (*temp) {
-				temp++;
-				othercount++;
-			}
-			*temp = ab_pkg;
-
-			ab_depend->depended_upon_by =
-			    xrealloc(ab_depend->depended_upon_by,
-				     (othercount +
-				      1) * sizeof(abstract_pkg_t *));
-
-			/* the array may have been moved by realloc */
-			temp = ab_depend->depended_upon_by + othercount;
-			*temp = NULL;
+			abstract_pkg_vec_insert(ab_depend->depended_upon_by, ab_pkg);
 		}
 	}
 }
