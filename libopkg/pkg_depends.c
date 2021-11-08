@@ -635,10 +635,7 @@ void parse_providelist(pkg_t *pkg, char *list)
 
 	for (item = strtok_r(list, ", ", &tok); item;
 	     count++, item = strtok_r(NULL, ", ", &tok)) {
-		tmp = realloc(provides, sizeof(abstract_pkg_t *) * (count + 1));
-
-		if (!tmp)
-			break;
+		tmp = xrealloc(provides, sizeof(abstract_pkg_t *) * (count + 1));
 
 		provided_abpkg = ensure_abstract_pkg_by_name(item);
 
@@ -677,10 +674,7 @@ void parse_replacelist(pkg_t *pkg, char *list)
 
 	for (count = 1, item = strtok_r(list, ", ", &tok); item;
 	     count++, item = strtok_r(NULL, ", ", &tok)) {
-		tmp = realloc(replaces, sizeof(abstract_pkg_t *) * (count + 1));
-
-		if (!tmp)
-			break;
+		tmp = xrealloc(replaces, sizeof(abstract_pkg_t *) * (count + 1));
 
 		old_abpkg = ensure_abstract_pkg_by_name(item);
 
@@ -822,13 +816,7 @@ void parse_deplist(pkg_t *pkg, enum depend_type type, char *list)
 		count++;
 
 	for (item = strtok_r(list, ",", &tok); item; item = strtok_r(NULL, ",", &tok), count++) {
-		tmp = realloc(deps, sizeof(compound_depend_t) * (count + 1));
-
-		if (!tmp)
-			break;
-
-		deps = tmp;
-
+		deps = xrealloc(deps, sizeof(compound_depend_t) * (count + 1));
 		memset(deps + count - 1, 0, sizeof(compound_depend_t));
 		parseDepends(deps + count - 1, item, type);
 	}
@@ -1009,20 +997,14 @@ static int parseDepends(compound_depend_t * compound_depend, char *depend_str, e
 {
 	int i;
 	char *depend, *name, *vstr, *rest, *tok = NULL;
-	depend_t **possibilities = NULL, **tmp;
+	depend_t **possibilities = NULL;
 
 	compound_depend->type = type;
 
 	for (i = 0, depend = strtok_r(depend_str, "|", &tok); depend; i++, depend = strtok_r(NULL, "|", &tok)) {
 		name = strtok(depend, " ");
 		rest = strtok(NULL, "\n");
-
-		tmp = realloc(possibilities, sizeof(tmp) * (i + 1));
-
-		if (!tmp)
-			return -1;
-
-		possibilities = tmp;
+		possibilities = xrealloc(possibilities, sizeof(depend_t *) * (i + 1));
 		possibilities[i] = depend_init();
 		possibilities[i]->pkg = ensure_abstract_pkg_by_name(name);
 
