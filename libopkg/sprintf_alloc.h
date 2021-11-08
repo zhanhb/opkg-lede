@@ -18,6 +18,6 @@
 #ifndef SPRINTF_ALLOC_H
 #define SPRINTF_ALLOC_H
 
-void sprintf_alloc(char **str, const char *fmt, ...);
+void sprintf_alloc(char **str, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 
 #endif
