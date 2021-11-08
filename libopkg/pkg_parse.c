@@ -198,6 +198,7 @@ int pkg_parse_line(void *ptr, char *line, uint mask)
 	/* these flags are a bit hackish... */
 	static int reading_conffiles = 0, reading_description = 0;
 	static char *description = NULL;
+	static size_t description_len = 0;
 	int ret = 0;
 
 	/* Exclude globally masked fields. */
@@ -241,6 +242,7 @@ int pkg_parse_line(void *ptr, char *line, uint mask)
 	case 'D':
 		if ((mask & PFM_DESCRIPTION) && is_field("Description", line)) {
 			description = parse_simple("Description", line);
+			description_len = description ? strlen(description) : 0;
 			reading_conffiles = 0;
 			reading_description = 1;
 			goto dont_reset_flags;
@@ -335,16 +337,17 @@ int pkg_parse_line(void *ptr, char *line, uint mask)
 
 	case ' ':
 		if ((mask & PFM_DESCRIPTION) && reading_description) {
-			size_t len = (description ? strlen(description) : 0)
-				+ (isatty(1) ? 1 : 0) + strlen(line) + 1;
+			size_t line_len = strlen(line);
+			int istty = isatty(1) != 0;
+			size_t len = description_len + istty + line_len;
 
-			description = description ? xrealloc(description, len)
-				: xcalloc(len, 1);
+			description = description ? xrealloc(description, len + 1) : xmalloc(len + 1);
 
-			if (isatty(1))
-				strcat(description, "\n");
+			if (istty)
+				description[description_len++] = '\n';
 
-			strcat(description, line);
+			strcpy(description + description_len, line);
+			description_len = len;
 			goto dont_reset_flags;
 		} else if ((mask & PFM_CONFFILES) && reading_conffiles) {
 			parse_conffiles(pkg, line);
@@ -365,6 +368,7 @@ int pkg_parse_line(void *ptr, char *line, uint mask)
 		free(description);
 		reading_description = 0;
 		description = NULL;
+		description_len = 0;
 	}
 
 	reading_conffiles = 0;
