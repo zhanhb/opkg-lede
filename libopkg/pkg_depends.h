@@ -56,11 +56,6 @@ struct compound_depend {
 };
 typedef struct compound_depend compound_depend_t;
 
-void buildProvides(abstract_pkg_t * ab_pkg, pkg_t * pkg);
-void buildConflicts(pkg_t * pkg);
-void buildReplaces(abstract_pkg_t * ab_pkg, pkg_t * pkg);
-void buildDepends(pkg_t * pkg);
-
 void parse_deplist(pkg_t *pkg, enum depend_type type, char *list);
 
 abstract_pkg_t **init_providelist(pkg_t *pkg, int *count);

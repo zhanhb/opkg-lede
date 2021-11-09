@@ -716,18 +716,7 @@ void hash_insert_pkg(pkg_t * pkg, int set_status)
 		ab_pkg->state_status = SS_UNPACKED;
 	}
 
-	buildDepends(pkg);
-
-	buildProvides(ab_pkg, pkg);
-
 	init_providelist(pkg, NULL);
-
-	/* Need to build the conflicts graph before replaces for correct
-	 * calculation of replaced_by relation.
-	 */
-	buildConflicts(pkg);
-
-	buildReplaces(ab_pkg, pkg);
 
 	buildDependedUponBy(pkg, ab_pkg);
 
