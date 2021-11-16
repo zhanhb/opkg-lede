@@ -1479,25 +1479,49 @@ void pkg_info_preinstall_check(void)
 	pkg_vec_free(installed_pkgs);
 }
 
-struct pkg_write_filelist_data {
+struct pkg_filelist_data {
 	pkg_t *pkg;
-	FILE *stream;
+	const char **files;
+	size_t count, capacity;
 };
 
 static void
-pkg_write_filelist_helper(const char *key, void *entry_, void *data_)
+pkg_append_filelist(const char *key, void *entry_, void *data_)
 {
-	struct pkg_write_filelist_data *data = data_;
+	struct pkg_filelist_data *data = data_;
 	pkg_t *entry = entry_;
+	const char **files;
+
 	if (entry == data->pkg) {
-		fprintf(data->stream, "%s\n", key);
+		files = data->files;
+		if (files == NULL) {
+			data->files = files = xmalloc((data->capacity = 8) * sizeof files[0]);
+		} else if (data->capacity == data->count) {
+			data->files = files = xrealloc(files, (data->capacity *= 2) * sizeof files[0]);
+		}
+		files[data->count++] = key;
 	}
+}
+
+static int string_compare(const void * a, const void * b) {
+	const char **pa = (const char **) a, **pb = (const char **) b;
+	return strcmp(*pa, *pb);
 }
 
 int pkg_write_filelist(pkg_t * pkg)
 {
-	struct pkg_write_filelist_data data;
+	struct pkg_filelist_data data;
 	char *list_file_name;
+	FILE *stream;
+	int i;
+
+	data.pkg = pkg;
+	data.files = NULL;
+	data.count = 0;
+	data.capacity = 0;
+	hash_table_foreach(&conf->file_hash, pkg_append_filelist, &data);
+
+	qsort(data.files, data.count, sizeof(data.files[0]), string_compare);
 
 	sprintf_alloc(&list_file_name, "%s/%s.list",
 		      pkg->dest->info_dir, pkg->name);
@@ -1505,16 +1529,18 @@ int pkg_write_filelist(pkg_t * pkg)
 	opkg_msg(INFO, "Creating %s file for pkg %s.\n",
 		 list_file_name, pkg->name);
 
-	data.stream = fopen(list_file_name, "w");
-	if (!data.stream) {
+	stream = fopen(list_file_name, "w");
+	if (!stream) {
 		opkg_perror(ERROR, "Failed to open %s", list_file_name);
 		free(list_file_name);
 		return -1;
 	}
+	for (i = 0; i < data.count; ++i) {
+		fprintf(stream, "%s\n", data.files[i]);
+	}
 
-	data.pkg = pkg;
-	hash_table_foreach(&conf->file_hash, pkg_write_filelist_helper, &data);
-	fclose(data.stream);
+	fclose(stream);
+	if (data.files) free(data.files);
 	free(list_file_name);
 
 	pkg->state_flag &= ~SF_FILELIST_CHANGED;
