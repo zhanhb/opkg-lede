@@ -59,9 +59,9 @@ const char *mode_string(int mode)
 	buf[0] = TYPECHAR(mode);
 	for (i = 0; i < 9; i++) {
 		if (mode & SBIT[i])
-			buf[i + 1] = (mode & MBIT[i]) ? SMODE1[i] : SMODE0[i];
+			buf[i + 1] = (mode & MBIT[i] ? SMODE1 : SMODE0)[i];
 		else
-			buf[i + 1] = (mode & MBIT[i]) ? MODE1[i] : MODE0[i];
+			buf[i + 1] = (mode & MBIT[i] ? MODE1 : MODE0)[i];
 	}
 	return buf;
 }
