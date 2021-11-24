@@ -285,8 +285,7 @@ opkg_install_package(const char *package_name,
 		if (!stripped_filename)
 			stripped_filename = (char *)filename;
 
-		local_filename = concat_path_file(conf->tmp_dir,
-			      stripped_filename);
+		local_filename = concat_path_file(conf->tmp_dir, stripped_filename);
 
 		pkg_set_string(pkg, PKG_LOCAL_FILENAME, local_filename);
 
@@ -489,7 +488,7 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 	pdata.pkg = NULL;
 	progress(pdata, 0);
 
-	lists_dir = xstrdup((conf->restrict_to_default_dest)
+	lists_dir = xstrdup(conf->restrict_to_default_dest
 		      ? conf->default_dest->lists_dir : conf->lists_dir);
 
 	if (!file_is_dir(lists_dir)) {
@@ -508,7 +507,7 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 		}
 	}
 
-	sprintf_alloc(&tmp, "%s/update-XXXXXX", conf->tmp_dir);
+	tmp = concat_path_file(conf->tmp_dir, "update-XXXXXX");
 	if (mkdtemp(tmp) == NULL) {
 		opkg_perror(ERROR, "Coundn't create temporary directory %s",
 			    tmp);
@@ -545,8 +544,7 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 			char *sig_file_name;
 			/* download detached signitures to verify the package lists */
 			/* get the url for the sig file */
-			url = concat_path_file(src->value,
-				      "Packages.sig");
+			url = concat_path_file(src->value, "Packages.sig");
 
 			/* create filename for signature */
 			sprintf_alloc(&sig_file_name, "%s/%s.sig", lists_dir,
@@ -747,7 +745,7 @@ int opkg_repository_accessibility_check(void)
 		if (iter1)
 			continue;
 
-		sprintf_alloc(&repo_ptr, "%s/index.html", stmp);
+		repo_ptr = concat_path_file(stmp, "index.html");
 		free(stmp);
 
 		str_list_append(src, repo_ptr);

@@ -31,30 +31,20 @@ int pkg_dest_init(pkg_dest_t * dest, const char *name, const char *root_dir,
 	dest->name = xstrdup(name);
 
 	/* Guarantee that dest->root_dir ends with a '/' */
-	if (root_dir[strlen(root_dir) - 1] == '/') {
-		dest->root_dir = xstrdup(root_dir);
-	} else {
-		sprintf_alloc(&dest->root_dir, "%s/", root_dir);
-	}
+	dest->root_dir = concat_path_file(root_dir, "/");
 	file_mkdir_hier(dest->root_dir, 0755);
 
-	sprintf_alloc(&dest->opkg_dir, "%s%s",
-		      dest->root_dir, OPKG_STATE_DIR_PREFIX);
+	dest->opkg_dir = concat_path_file(dest->root_dir, OPKG_STATE_DIR_PREFIX);
 	file_mkdir_hier(dest->opkg_dir, 0755);
 
-	if (lists_dir[0] == '/')
-		dest->lists_dir = xstrdup(lists_dir);
-	else
-		sprintf_alloc(&dest->lists_dir, "/%s", lists_dir);
+	dest->lists_dir = concat_path_file(NULL, lists_dir);
 
 	file_mkdir_hier(dest->lists_dir, 0755);
 
-	dest->info_dir = concat_path_file(
-		      dest->opkg_dir, OPKG_INFO_DIR_SUFFIX);
+	dest->info_dir = concat_path_file(dest->opkg_dir, OPKG_INFO_DIR_SUFFIX);
 	file_mkdir_hier(dest->info_dir, 0755);
 
-	dest->status_file_name = concat_path_file(
-		      dest->opkg_dir, OPKG_STATUS_FILE_SUFFIX);
+	dest->status_file_name = concat_path_file(dest->opkg_dir, OPKG_STATUS_FILE_SUFFIX);
 
 	return 0;
 }

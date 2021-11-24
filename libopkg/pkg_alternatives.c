@@ -99,9 +99,7 @@ static int pkg_alternatives_update_path(pkg_t *pkg, const pkg_vec_t *installed, 
 		opkg_msg(ERROR, "Alternatives path '%s' must be an absolute one\n", path);
 		return -1;
 	}
-	sprintf_alloc(&path_in_dest, "%s%s", the_pkg->dest->root_dir, &path[1]);
-	if (!path_in_dest)
-		return -1;
+	path_in_dest = concat_path_file(the_pkg->dest->root_dir, path);
 
 	if (the_alt) {
 		target_path = the_alt->altpath;

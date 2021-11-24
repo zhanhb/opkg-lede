@@ -124,7 +124,7 @@ static int opkg_update_cmd(int argc, char **argv)
 
 	failures = 0;
 
-	sprintf_alloc(&tmp, "%s/update-XXXXXX", conf->tmp_dir);
+	tmp = concat_path_file(conf->tmp_dir, "update-XXXXXX");
 	if (mkdtemp(tmp) == NULL) {
 		opkg_perror(ERROR, "Failed to make temp dir %s", conf->tmp_dir);
 		return -1;
@@ -157,8 +157,7 @@ static int opkg_update_cmd(int argc, char **argv)
 		if (pkglist_dl_error == 0 && conf->check_signature) {
 			/* download detached signitures to verify the package lists */
 			/* get the url for the sig file */
-			url = concat_path_file(src->value,
-				      "Packages.sig");
+			url = concat_path_file(src->value, "Packages.sig");
 
 			/* create temporary file for it */
 			char *tmp_file_name;
@@ -225,8 +224,7 @@ static opkg_intercept_t opkg_prep_intercepts(void)
 	sprintf_alloc(&newpath, "%s/opkg/intercept:%s", DATADIR,
 	              ctx->oldpath ? ctx->oldpath : PATH_SPEC);
 
-	sprintf_alloc(&ctx->statedir, "%s/opkg-intercept-XXXXXX",
-	              conf->tmp_dir);
+	ctx->statedir = concat_path_file(conf->tmp_dir, "opkg-intercept-XXXXXX");
 
 	if (mkdtemp(ctx->statedir) == NULL) {
 		opkg_perror(ERROR, "Failed to make temp dir %s", ctx->statedir);
@@ -269,8 +267,7 @@ static int opkg_finalize_intercepts(opkg_intercept_t ctx)
 			if (de->d_name[0] == '.')
 				continue;
 
-			path = concat_path_file(ctx->statedir,
-				      de->d_name);
+			path = concat_path_file(ctx->statedir, de->d_name);
 			if (access(path, X_OK) == 0) {
 				const char *argv[] = { "/bin/sh", "-c", path, NULL };
 				xsystem(argv);

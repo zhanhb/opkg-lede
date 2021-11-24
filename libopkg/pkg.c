@@ -1267,14 +1267,12 @@ str_list_t *pkg_get_installed_files(pkg_t * pkg)
 			if (*file_name == '/') {
 				file_name++;
 			}
-			sprintf_alloc(&installed_file_name, "%s%s",
-				      pkg->dest->root_dir, file_name);
+			installed_file_name = concat_path_file(pkg->dest->root_dir, file_name);
 		} else {
 			if (conf->offline_root &&
 			    strncmp(conf->offline_root, file_name,
 				    rootdirlen)) {
-				sprintf_alloc(&installed_file_name, "%s%s",
-					      conf->offline_root, file_name);
+				installed_file_name = concat_path_file(conf->offline_root, file_name);
 			} else {
 				// already contains root_dir as header -> ABSOLUTE
 				installed_file_name = xstrdup(

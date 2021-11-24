@@ -27,7 +27,6 @@
 #include "pkg_vec.h"
 #include "pkg.h"
 #include "xregex.h"
-#include "sprintf_alloc.h"
 #include "opkg_message.h"
 #include "file_util.h"
 #include "opkg_defines.h"
@@ -90,8 +89,7 @@ static int resolve_pkg_dest_list(void)
 		nv_pair = (nv_pair_t *) iter->data;
 
 		if (conf->offline_root) {
-			sprintf_alloc(&root_dir, "%s%s", conf->offline_root,
-				      nv_pair->value);
+			root_dir = concat_path_file(conf->offline_root, nv_pair->value);
 		} else {
 			root_dir = xstrdup(nv_pair->value);
 		}
@@ -404,10 +402,7 @@ int opkg_conf_write_status_files(void)
 
 char *root_filename_alloc(char *filename)
 {
-	char *root_filename;
-	sprintf_alloc(&root_filename, "%s%s",
-		      (conf->offline_root ? conf->offline_root : ""), filename);
-	return root_filename;
+	return concat_path_file(conf->offline_root, filename);
 }
 
 static int glob_errfunc(const char *epath, int eerrno)
@@ -455,14 +450,12 @@ int opkg_conf_load(void)
 	}
 
 	if (conf->offline_root)
-		sprintf_alloc(&etc_opkg_conf_pattern, "%s/etc/opkg/*.conf",
-			      conf->offline_root);
+		etc_opkg_conf_pattern = concat_path_file(conf->offline_root, "/etc/opkg/*.conf");
 	else {
 		const char *conf_file_dir = getenv("OPKG_CONF_DIR");
 		if (conf_file_dir == NULL)
 			conf_file_dir = OPKG_CONF_DEFAULT_CONF_FILE_DIR;
-		sprintf_alloc(&etc_opkg_conf_pattern, "%s/*.conf",
-			      conf_file_dir);
+		etc_opkg_conf_pattern = concat_path_file(conf_file_dir, "*.conf");
 	}
 
 	memset(&globbuf, 0, sizeof(globbuf));
@@ -489,11 +482,7 @@ int opkg_conf_load(void)
 
 	globfree(&globbuf);
 
-	if (conf->offline_root)
-		lock_file = concat_path_file(conf->offline_root,
-			      OPKGLOCKFILE);
-	else
-		lock_file = xstrdup(OPKGLOCKFILE);
+	lock_file = concat_path_file(conf->offline_root, OPKGLOCKFILE);
 
 	lock_fd = creat(lock_file, S_IRUSR | S_IWUSR | S_IRGRP);
 	if (lock_fd == -1) {
@@ -515,9 +504,7 @@ int opkg_conf_load(void)
 	else
 		tmp_dir_base = getenv("TMPDIR");
 
-	tmp = concat_path_file(
-		      tmp_dir_base ? tmp_dir_base :
-		      OPKG_CONF_DEFAULT_TMP_DIR_BASE, OPKG_CONF_TMP_DIR_SUFFIX);
+	tmp = concat_path_file(tmp_dir_base ? tmp_dir_base : OPKG_CONF_DEFAULT_TMP_DIR_BASE, OPKG_CONF_TMP_DIR_SUFFIX);
 	if (conf->tmp_dir)
 		free(conf->tmp_dir);
 	conf->tmp_dir = mkdtemp(tmp);
@@ -539,8 +526,7 @@ int opkg_conf_load(void)
 		conf->verify_program = xstrdup(OPKG_CONF_DEFAULT_VERIFY_PROGRAM);
 
 	if (conf->offline_root) {
-		tmp = concat_path_file(conf->offline_root,
-			      conf->lists_dir);
+		tmp = concat_path_file(conf->offline_root, conf->lists_dir);
 		free(conf->lists_dir);
 		conf->lists_dir = tmp;
 	}

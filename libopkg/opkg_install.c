@@ -266,8 +266,7 @@ static int unpack_pkg_control_files(pkg_t * pkg)
 		return 0;
 	}
 
-	sprintf_alloc(&conffiles_file_name, "%s/conffiles",
-		      tmp_unpack_dir);
+	conffiles_file_name = concat_path_file(tmp_unpack_dir, "conffiles");
 	if (!file_exists(conffiles_file_name)) {
 		free(conffiles_file_name);
 		return 0;
@@ -305,12 +304,13 @@ static int unpack_pkg_control_files(pkg_t * pkg)
 		/* Prepend dest->root_dir to conffile name.
 		   Take pains to avoid multiple slashes. */
 		root_dir = pkg->dest->root_dir;
-		if (conf->offline_root)
+		if (conf->offline_root) {
 			/* skip the offline_root prefix */
 			root_dir =
 			    pkg->dest->root_dir + strlen(conf->offline_root);
-		sprintf_alloc(&cf_name_in_dest, "%s%s", root_dir,
-			      cf_name[0] == '/' ? (cf_name + 1) : cf_name);
+			if (*root_dir != '/') --root_dir;
+		}
+		cf_name_in_dest = concat_path_file(root_dir, cf_name);
 
 		/* Can't get an md5sum now, (file isn't extracted yet).
 		   We'll wait until resolve_conffiles */
