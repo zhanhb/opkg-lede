@@ -277,7 +277,7 @@ opkg_install_package(const char *package_name,
 
 		filename = pkg_get_string(pkg, PKG_FILENAME);
 		urlencoded_path = urlencode_path(filename);
-		sprintf_alloc(&url, "%s/%s", pkg->src->value, urlencoded_path);
+		url = concat_path_file(pkg->src->value, urlencoded_path);
 		free(urlencoded_path);
 
 		/* Get the filename part, without any directory */
@@ -285,7 +285,7 @@ opkg_install_package(const char *package_name,
 		if (!stripped_filename)
 			stripped_filename = (char *)filename;
 
-		sprintf_alloc(&local_filename, "%s/%s", conf->tmp_dir,
+		local_filename = concat_path_file(conf->tmp_dir,
 			      stripped_filename);
 
 		pkg_set_string(pkg, PKG_LOCAL_FILENAME, local_filename);
@@ -529,10 +529,10 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 
 		src = (pkg_src_t *) iter->data;
 
-		sprintf_alloc(&url, "%s/%s", src->value,
+		url = concat_path_file(src->value,
 			      src->gzip ? "Packages.gz" : "Packages");
 
-		sprintf_alloc(&list_file_name, "%s/%s", lists_dir, src->name);
+		list_file_name = concat_path_file(lists_dir, src->name);
 
 		if (opkg_download(url, list_file_name, 0)) {
 			opkg_msg(ERROR, "Couldn't retrieve %s\n", url);
@@ -545,7 +545,7 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 			char *sig_file_name;
 			/* download detached signitures to verify the package lists */
 			/* get the url for the sig file */
-			sprintf_alloc(&url, "%s/%s", src->value,
+			url = concat_path_file(src->value,
 				      "Packages.sig");
 
 			/* create filename for signature */

@@ -49,11 +49,11 @@ int pkg_dest_init(pkg_dest_t * dest, const char *name, const char *root_dir,
 
 	file_mkdir_hier(dest->lists_dir, 0755);
 
-	sprintf_alloc(&dest->info_dir, "%s/%s",
+	dest->info_dir = concat_path_file(
 		      dest->opkg_dir, OPKG_INFO_DIR_SUFFIX);
 	file_mkdir_hier(dest->info_dir, 0755);
 
-	sprintf_alloc(&dest->status_file_name, "%s/%s",
+	dest->status_file_name = concat_path_file(
 		      dest->opkg_dir, OPKG_STATUS_FILE_SUFFIX);
 
 	return 0;

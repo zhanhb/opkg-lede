@@ -1390,7 +1390,7 @@ int pkg_run_script(pkg_t * pkg, const char *script, const char *args)
 				 pkg->name);
 			return -1;
 		}
-		sprintf_alloc(&path, "%s/%s", tmp_unpack_dir, script);
+		path = concat_path_file(tmp_unpack_dir, script);
 	}
 
 	opkg_msg(INFO, "Running script %s.\n", path);

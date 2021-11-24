@@ -38,7 +38,7 @@ pkg_extract_control_files_to_dir_with_prefix(pkg_t * pkg, const char *dir,
 	int err;
 	char *dir_with_prefix;
 
-	sprintf_alloc(&dir_with_prefix, "%s/%s", dir, prefix);
+	dir_with_prefix = concat_path_file(dir, prefix);
 
 	deb_extract(pkg_get_string(pkg, PKG_LOCAL_FILENAME), stderr,
 		    extract_control_tar_gz

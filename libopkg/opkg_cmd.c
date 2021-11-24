@@ -136,10 +136,10 @@ static int opkg_update_cmd(int argc, char **argv)
 
 		src = (pkg_src_t *) iter->data;
 
-		sprintf_alloc(&url, "%s/%s", src->value,
+		url = concat_path_file(src->value,
 			      src->gzip ? "Packages.gz" : "Packages");
 
-		sprintf_alloc(&list_file_name, "%s/%s", lists_dir, src->name);
+		list_file_name = concat_path_file(lists_dir, src->name);
 		pkglist_dl_error = 0;
 		if (opkg_download(url, list_file_name, 0)) {
 			failures++;
@@ -157,7 +157,7 @@ static int opkg_update_cmd(int argc, char **argv)
 		if (pkglist_dl_error == 0 && conf->check_signature) {
 			/* download detached signitures to verify the package lists */
 			/* get the url for the sig file */
-			sprintf_alloc(&url, "%s/%s", src->value,
+			url = concat_path_file(src->value,
 				      "Packages.sig");
 
 			/* create temporary file for it */
@@ -269,7 +269,7 @@ static int opkg_finalize_intercepts(opkg_intercept_t ctx)
 			if (de->d_name[0] == '.')
 				continue;
 
-			sprintf_alloc(&path, "%s/%s", ctx->statedir,
+			path = concat_path_file(ctx->statedir,
 				      de->d_name);
 			if (access(path, X_OK) == 0) {
 				const char *argv[] = { "/bin/sh", "-c", path, NULL };

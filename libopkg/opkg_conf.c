@@ -490,7 +490,7 @@ int opkg_conf_load(void)
 	globfree(&globbuf);
 
 	if (conf->offline_root)
-		sprintf_alloc(&lock_file, "%s/%s", conf->offline_root,
+		lock_file = concat_path_file(conf->offline_root,
 			      OPKGLOCKFILE);
 	else
 		lock_file = xstrdup(OPKGLOCKFILE);
@@ -515,7 +515,7 @@ int opkg_conf_load(void)
 	else
 		tmp_dir_base = getenv("TMPDIR");
 
-	sprintf_alloc(&tmp, "%s/%s",
+	tmp = concat_path_file(
 		      tmp_dir_base ? tmp_dir_base :
 		      OPKG_CONF_DEFAULT_TMP_DIR_BASE, OPKG_CONF_TMP_DIR_SUFFIX);
 	if (conf->tmp_dir)
@@ -539,7 +539,7 @@ int opkg_conf_load(void)
 		conf->verify_program = xstrdup(OPKG_CONF_DEFAULT_VERIFY_PROGRAM);
 
 	if (conf->offline_root) {
-		sprintf_alloc(&tmp, "%s/%s", conf->offline_root,
+		tmp = concat_path_file(conf->offline_root,
 			      conf->lists_dir);
 		free(conf->lists_dir);
 		conf->lists_dir = tmp;

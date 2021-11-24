@@ -171,7 +171,7 @@ int pkg_hash_load_feeds(int state_flags, void (*cb)(pkg_t *, void *), void *priv
 
 		src = (pkg_src_t *) iter->data;
 
-		sprintf_alloc(&list_file, "%s/%s", lists_dir, src->name);
+		list_file = concat_path_file(lists_dir, src->name);
 
 		if (file_exists(list_file)) {
 			if (pkg_hash_add_from_file(list_file, src, NULL, 0, state_flags, cb, priv)) {

@@ -1331,7 +1331,7 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
 		lists_dir = xstrdup((conf->restrict_to_default_dest)
 			      ? conf->default_dest->lists_dir
 			      : conf->lists_dir);
-		sprintf_alloc(&list_file_name, "%s/%s", lists_dir,
+		list_file_name = concat_path_file(lists_dir,
 			      pkg->src->name);
 		sprintf_alloc(&sig_file_name, "%s/%s.sig", lists_dir,
 			      pkg->src->name);

@@ -118,7 +118,7 @@ opkg_download(const char *src, const char *dest_file_name,
 		return err;
 	}
 
-	sprintf_alloc(&tmp_file_location, "%s/%s", conf->tmp_dir, src_base);
+	tmp_file_location = concat_path_file(conf->tmp_dir, src_base);
 	free(src_basec);
 	err = unlink(tmp_file_location);
 	if (err && errno != ENOENT) {
@@ -224,7 +224,7 @@ opkg_download_cache(const char *src, const char *dest_file_name)
 	}
 
 	cache_name = get_cache_filename(dest_file_name);
-	sprintf_alloc(&cache_location, "%s/%s", conf->cache, cache_name);
+	cache_location = concat_path_file(conf->cache, cache_name);
 	if (file_exists(cache_location))
 		opkg_msg(NOTICE, "Copying %s.\n", cache_location);
 	else {
@@ -272,7 +272,7 @@ int opkg_download_pkg(pkg_t * pkg, const char *dir)
 	}
 
 	urlencoded_path = urlencode_path(filename);
-	sprintf_alloc(&url, "%s/%s", pkg->src->value, urlencoded_path);
+	url = concat_path_file(pkg->src->value, urlencoded_path);
 	free(urlencoded_path);
 
 	/* The filename might be something like
@@ -284,13 +284,13 @@ int opkg_download_pkg(pkg_t * pkg, const char *dir)
 	if (!stripped_filename)
 		stripped_filename = filename;
 
-	sprintf_alloc(&local_filename, "%s/%s", dir, stripped_filename);
+	local_filename = concat_path_file(dir, stripped_filename);
 	pkg_set_string(pkg, PKG_LOCAL_FILENAME, local_filename);
 
 	/* Invalidate/remove cached package if it has an incorrect checksum. */
 	if (conf->cache) {
 		cache_name = get_cache_filename(local_filename);
-		sprintf_alloc(&cache_location, "%s/%s", conf->cache, cache_name);
+		cache_location = concat_path_file(conf->cache, cache_name);
 		free(cache_name);
 		if (file_exists(cache_location)) {
 			err = opkg_verify_integrity(pkg, cache_location);
@@ -327,7 +327,7 @@ int opkg_prepare_url_for_install(const char *url, char **namep)
 		char *file_basec = xstrdup(url);
 		char *file_base = basename(file_basec);
 
-		sprintf_alloc(&tmp_file, "%s/%s", conf->tmp_dir, file_base);
+		tmp_file = concat_path_file(conf->tmp_dir, file_base);
 		err = opkg_download(url, tmp_file, 0);
 		if (err)
 			return err;
