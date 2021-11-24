@@ -31,15 +31,20 @@
 extern char *concat_path_file(const char *path, const char *filename)
 {
 	char *outbuf;
-	char *lc;
+	int ends_with_slash;
+	size_t path_len, name_len;
 
 	if (!path)
 		path = "";
-	lc = last_char_is(path, '/');
+	path_len = strlen(path);
+	ends_with_slash = path_len && path[path_len - 1] == '/';
 	while (*filename == '/')
 		filename++;
-	outbuf = xmalloc(strlen(path) + strlen(filename) + 1 + (lc == NULL));
-	sprintf(outbuf, "%s%s%s", path, (lc == NULL) ? "/" : "", filename);
-
+	name_len = strlen(filename);
+	outbuf = xmalloc(path_len + name_len + !ends_with_slash + 1);
+	memcpy(outbuf, path, path_len);
+	if (!ends_with_slash) outbuf[path_len++] = '/';
+	memcpy(outbuf + path_len, filename, name_len);
+	outbuf[path_len + name_len] = 0;
 	return outbuf;
 }
