@@ -1277,7 +1277,7 @@ str_list_t *pkg_get_installed_files(pkg_t * pkg)
 					      conf->offline_root, file_name);
 			} else {
 				// already contains root_dir as header -> ABSOLUTE
-				sprintf_alloc(&installed_file_name, "%s",
+				installed_file_name = xstrdup(
 					      file_name);
 			}
 		}

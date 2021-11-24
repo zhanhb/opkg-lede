@@ -43,7 +43,7 @@ int pkg_dest_init(pkg_dest_t * dest, const char *name, const char *root_dir,
 	file_mkdir_hier(dest->opkg_dir, 0755);
 
 	if (lists_dir[0] == '/')
-		sprintf_alloc(&dest->lists_dir, "%s", lists_dir);
+		dest->lists_dir = xstrdup(lists_dir);
 	else
 		sprintf_alloc(&dest->lists_dir, "/%s", lists_dir);
 

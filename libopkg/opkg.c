@@ -489,7 +489,7 @@ opkg_update_package_lists(opkg_progress_callback_t progress_callback,
 	pdata.pkg = NULL;
 	progress(pdata, 0);
 
-	sprintf_alloc(&lists_dir, "%s", (conf->restrict_to_default_dest)
+	lists_dir = xstrdup((conf->restrict_to_default_dest)
 		      ? conf->default_dest->lists_dir : conf->lists_dir);
 
 	if (!file_is_dir(lists_dir)) {

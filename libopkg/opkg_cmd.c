@@ -104,7 +104,7 @@ static int opkg_update_cmd(int argc, char **argv)
 	pkg_src_list_elt_t *iter;
 	pkg_src_t *src;
 
-	sprintf_alloc(&lists_dir, "%s",
+	lists_dir = xstrdup(
 		      conf->restrict_to_default_dest ? conf->default_dest->
 		      lists_dir : conf->lists_dir);
 

@@ -493,7 +493,7 @@ int opkg_conf_load(void)
 		sprintf_alloc(&lock_file, "%s/%s", conf->offline_root,
 			      OPKGLOCKFILE);
 	else
-		sprintf_alloc(&lock_file, "%s", OPKGLOCKFILE);
+		lock_file = xstrdup(OPKGLOCKFILE);
 
 	lock_fd = creat(lock_file, S_IRUSR | S_IWUSR | S_IRGRP);
 	if (lock_fd == -1) {

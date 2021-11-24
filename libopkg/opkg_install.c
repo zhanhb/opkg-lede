@@ -1328,7 +1328,7 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
 
 	/* check to ensure the package has come from a repository */
 	if (conf->check_signature && pkg->src) {
-		sprintf_alloc(&lists_dir, "%s", (conf->restrict_to_default_dest)
+		lists_dir = xstrdup((conf->restrict_to_default_dest)
 			      ? conf->default_dest->lists_dir
 			      : conf->lists_dir);
 		sprintf_alloc(&list_file_name, "%s/%s", lists_dir,
