@@ -64,7 +64,7 @@ static ssize_t seek_forward(struct gzip_handle *zh, ssize_t len)
  */
 static char *extract_archive(struct gzip_handle *src_stream, FILE * out_stream,
 			     const file_header_t * file_entry,
-			     const int function, const char *prefix, int *err)
+			     int function, const char *prefix, int *err)
 {
 	FILE *dst_stream = NULL;
 	char *full_name = NULL;
@@ -517,7 +517,7 @@ static void free_header_tar(file_header_t * tar_entry)
 }
 
 char *deb_extract(const char *package_filename, FILE * out_stream,
-		  const int extract_function, const char *prefix,
+		  int extract_function, const char *prefix,
 		  const char *filename, int *err)
 {
 	FILE *deb_stream = NULL;

@@ -98,7 +98,7 @@ enum extract_functions_e {
 };
 
 char *deb_extract(const char *package_filename, FILE * out_stream,
-		  const int extract_function, const char *prefix,
+		  int extract_function, const char *prefix,
 		  const char *filename, int *err);
 
 int make_directory(const char *path, long mode, int flags);
