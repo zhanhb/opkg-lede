@@ -50,21 +50,14 @@
 		exit(EXIT_FAILURE); \
 	} while (0)
 
-extern void archive_xread_all(int fd, char *buf, size_t count);
-
 const char *mode_string(int mode);
 const char *time_string(time_t timeVal);
 
 int copy_file(const char *source, const char *dest, int flags);
 int copy_file_chunk(FILE * src_file, FILE * dst_file,
 		    unsigned long long chunksize);
-ssize_t safe_read(int fd, void *buf, size_t count);
-ssize_t full_read(int fd, char *buf, int len);
-
-extern int parse_mode(const char *s, mode_t * theMode);
 
 extern FILE *wfopen(const char *path, const char *mode);
-extern FILE *xfopen(const char *path, const char *mode);
 
 extern void *xmalloc(size_t size);
 extern void *xrealloc(void *old, size_t size);
@@ -107,10 +100,6 @@ enum extract_functions_e {
 char *deb_extract(const char *package_filename, FILE * out_stream,
 		  const int extract_function, const char *prefix,
 		  const char *filename, int *err);
-
-extern int unzip(FILE * l_in_file, FILE * l_out_file);
-extern int gz_close(int gunzip_pid);
-extern FILE *gz_open(FILE * compressed_file, int *pid);
 
 int make_directory(const char *path, long mode, int flags);
 
