@@ -144,8 +144,8 @@ static const unsigned char bin2hex[16] = {
 
 char *file_md5sum_alloc(const char *file_name)
 {
-	static const int md5sum_bin_len = 16;
-	static const int md5sum_hex_len = 32;
+#define md5sum_bin_len 16
+#define md5sum_hex_len 32
 
 	int i, len;
 	char *md5sum_hex;
@@ -168,12 +168,14 @@ char *file_md5sum_alloc(const char *file_name)
 	md5sum_hex[md5sum_hex_len] = '\0';
 
 	return md5sum_hex;
+#undef md5sum_bin_len
+#undef md5sum_hex_len
 }
 
 char *file_sha256sum_alloc(const char *file_name)
 {
-	static const int sha256sum_bin_len = 32;
-	static const int sha256sum_hex_len = 64;
+#define sha256sum_bin_len 32
+#define sha256sum_hex_len 64
 
 	int i, err;
 	FILE *file;
@@ -208,6 +210,8 @@ char *file_sha256sum_alloc(const char *file_name)
 	sha256sum_hex[sha256sum_hex_len] = '\0';
 
 	return sha256sum_hex;
+#undef sha256sum_bin_len
+#undef sha256sum_hex_len
 }
 
 char *checksum_bin2hex(const char *src, size_t len)
